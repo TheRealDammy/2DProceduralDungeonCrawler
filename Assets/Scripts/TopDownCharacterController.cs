@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +14,8 @@ public class TopDownCharacterController : MonoBehaviour
     //The inputs that we need to retrieve from the input system.
     private InputAction m_moveAction;
     private InputAction m_attackAction;
+    private InputAction m_sprintAction;
+    private InputAction m_rollAction;
 
     //The components that we need to edit to make the player move smoothly.
     private Animator m_animator;
@@ -27,8 +30,17 @@ public class TopDownCharacterController : MonoBehaviour
     [SerializeField] private float m_playerSpeed = 200f;
     //The maximum speed the player can move
     [SerializeField] private float m_playerMaxSpeed = 1000f;
+    [SerializeField] private float m_sprintSpeed = 400f;
 
     #endregion
+
+    private float minStamina = 0f;
+    private float maxStamina = 100f;
+    private float stamina = 100f;
+    private float staminaRegen = 20f;
+    private float sprintCost = 30f;
+    private bool canSprint = false;
+
 
     /// <summary>
     /// When the script first initialises this gets called.
@@ -39,7 +51,9 @@ public class TopDownCharacterController : MonoBehaviour
         //bind movement inputs to variables
         m_moveAction = InputSystem.actions.FindAction("Move");
         m_attackAction = InputSystem.actions.FindAction("Attack");
-        
+        m_sprintAction = InputSystem.actions.FindAction("Sprint");
+        m_rollAction = InputSystem.actions.FindAction("Roll");
+
         //get components from Character game object so that we can use them later.
         m_animator = GetComponent<Animator>();
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -85,8 +99,50 @@ public class TopDownCharacterController : MonoBehaviour
         {
             m_animator.SetFloat("Horizontal", m_playerDirection.x);
             m_animator.SetFloat("Vertical", m_playerDirection.y);
+            canSprint = true;
+        }
+        else 
+        {
+            canSprint = false;
         }
 
+        if (m_rollAction.IsPressed())
+        {
+            bool roll = m_animator.GetBool("Roll");
+            m_animator.SetBool("Roll", true);
+
+            Debug.Log("Roll!");
+        }
+
+        if (canSprint == true)
+        {
+            if (m_sprintAction.IsPressed())
+            {
+                
+                stamina -= sprintCost * Time.deltaTime;
+                stamina = Mathf.Clamp(stamina, minStamina, maxStamina);
+                if (stamina <= 0f)
+                {
+                    canSprint = false;
+                    Debug.Log("Out of stamina!");
+                    m_playerSpeed = 200f;
+                }
+                else
+                {
+                    Debug.Log("Stamina: " + stamina);
+                    m_playerSpeed = m_sprintSpeed;
+                }
+            }
+        }
+        else
+        {
+            if (stamina < 100f)
+            {
+                stamina += staminaRegen * Time.deltaTime;
+                Debug.Log("Stamina: " + stamina);
+            }
+            m_playerSpeed = 200f;
+        }
         // check if an attack has been triggered.
         if (m_attackAction.IsPressed())
         {
