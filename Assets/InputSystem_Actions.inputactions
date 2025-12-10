@@ -486,7 +486,7 @@
                     "name": "",
                     "id": "61f7d49b-bdc6-4d47-b761-8f149fda772a",
                     "path": "<Keyboard>/space",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Roll",

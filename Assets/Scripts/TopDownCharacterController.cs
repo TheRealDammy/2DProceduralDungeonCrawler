@@ -106,11 +106,9 @@ public class TopDownCharacterController : MonoBehaviour
             canSprint = false;
         }
 
-        if (m_rollAction.IsPressed())
+        if (m_rollAction.WasPressedThisFrame())
         {
-            bool roll = m_animator.GetBool("Roll");
-            m_animator.SetBool("Roll", true);
-
+            m_animator.SetTrigger("Roll");
             Debug.Log("Roll!");
         }
 
