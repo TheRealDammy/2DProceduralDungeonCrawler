@@ -109,6 +109,7 @@ public class TopDownCharacterController : MonoBehaviour
         if (m_rollAction.WasPressedThisFrame())
         {
             m_animator.SetTrigger("Roll");
+
             Debug.Log("Roll!");
         }
 
