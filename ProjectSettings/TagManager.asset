@@ -42,5 +42,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Ground
+    uniqueID: 1567661969
+    locked: 0
+  - name: Overlay
+    uniqueID: 1853079701
+    locked: 0
+  - name: Props
+    uniqueID: 3748575841
+    locked: 0
+  - name: Actors
+    uniqueID: 3931942081
+    locked: 0
   m_RenderingLayers:
   - Default

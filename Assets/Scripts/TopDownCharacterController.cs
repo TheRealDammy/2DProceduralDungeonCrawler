@@ -50,10 +50,7 @@ public class TopDownCharacterController : MonoBehaviour
     [SerializeField] private float m_fireRate;
     private float m_nextFireTime = 0f;
 
-    Vector3 mousePos = Input.mousePosition;
-
-    float mouseX = Input.GetAxis("Mouse X");
-    float mouseY = Input.GetAxis("Mouse Y");
+    
 
     /// <summary>
     /// When the script first initialises this gets called.
@@ -70,6 +67,7 @@ public class TopDownCharacterController : MonoBehaviour
         //get components from Character game object so that we can use them later.
         m_animator = GetComponent<Animator>();
         m_rigidbody = GetComponent<Rigidbody2D>();
+
     }
 
     /// <summary>
@@ -86,6 +84,7 @@ public class TopDownCharacterController : MonoBehaviour
     /// </summary>
     private void FixedUpdate()
     {
+
         //clamp the speed to the maximum speed for if the speed has been changed in code.
         float speed = m_playerSpeed > m_playerMaxSpeed ? m_playerMaxSpeed : m_playerSpeed;
         
