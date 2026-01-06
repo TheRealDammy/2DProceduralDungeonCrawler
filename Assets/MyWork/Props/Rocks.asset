@@ -13,9 +13,6 @@ MonoBehaviour:
   m_Name: Rocks
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: e029d7101324d4240943a75bb6e6812b, type: 2}
-  - {fileID: 11400000, guid: fb0e2ed6c78644943b3690e265d3919d, type: 2}
-  - {fileID: 11400000, guid: f88d5a5ba614f8042b636235c8be6afd, type: 2}
   - {fileID: 11400000, guid: 016f14db4a448e84ca37cda884b02266, type: 2}
   - {fileID: 11400000, guid: 31d8ab4da3e51b442adaca4c79aba150, type: 2}
   - {fileID: 11400000, guid: 8e46f255e0c462747b84b3a6ddc904d0, type: 2}
@@ -28,8 +25,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3d4c695f8643e19428f1dbd2197eca1d, type: 2}
   - {fileID: 11400000, guid: b9aa0103e9fed274a9b4c0accfb561c4, type: 2}
   spawnChance: 0.03
+  isTall: 0
   minHeight: 0
   minMoisture: 0.6
   minHeat: 0
-  isTall: 0
-  minSpacing: 0

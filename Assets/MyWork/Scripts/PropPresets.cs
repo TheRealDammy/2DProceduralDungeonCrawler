@@ -9,14 +9,12 @@ public class PropPreset : ScriptableObject
     [Range(0f, 1f)]
     public float spawnChance = 0.05f;
 
+    public bool isTall = false; // <-- ADD THIS
+
     [Header("Conditions")]
     public float minHeight;
     public float minMoisture;
     public float minHeat;
-
-    [Header("Placement")]
-    public bool isTall = false;     // trees = true, rocks/bushes = false
-    public int minSpacing = 0;      // trees often 1 or 2
 
     public TileBase GetRandomTile()
     {
