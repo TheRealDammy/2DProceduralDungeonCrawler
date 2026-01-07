@@ -13,26 +13,26 @@ public class TopDownCharacterController : MonoBehaviour
     #region Framework Variables
 
     //The inputs that we need to retrieve from the input system.
-    private InputAction m_moveAction;
-    private InputAction m_attackAction;
-    private InputAction m_sprintAction;
-    private InputAction m_rollAction;
+    private InputAction moveAction;
+    private InputAction attackAction;
+    private InputAction sprintAction;
+    private InputAction rollAction;
 
     //The components that we need to edit to make the player move smoothly.
-    private Animator m_animator;
+    private Animator animator;
     private Rigidbody2D m_rigidbody;
     
     //The direction that the player is moving in.
-    private Vector2 m_playerDirection;
-    private Vector2 m_lastDirection;
+    private Vector2 playerDirection;
+    private Vector2 lastDirection;
    
 
     [Header("Movement parameters")]
     //The speed at which the player moves
-    [SerializeField] private float m_playerSpeed = 200f;
+    [SerializeField] private float playerSpeed = 200f;
     //The maximum speed the player can move
-    [SerializeField] private float m_playerMaxSpeed = 1000f;
-    [SerializeField] private float m_sprintSpeed = 400f;
+    [SerializeField] private float playerMaxSpeed = 1000f;
+    [SerializeField] private float sprintSpeed = 400f;
 
     #endregion
 
@@ -44,11 +44,11 @@ public class TopDownCharacterController : MonoBehaviour
     private bool canSprint = false;
 
     [Header("Projectile parameters")]
-    [SerializeField] private GameObject m_projectilePrefab;
-    [SerializeField] private Transform m_projectileSpawnPoint;
-    [SerializeField] private float m_projectileSpeed;
-    [SerializeField] private float m_fireRate;
-    private float m_nextFireTime = 0f;
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform projectileSpawnPoint;
+    [SerializeField] private float projectileSpeed;
+    [SerializeField] private float fireRate;
+    private float nextFireTime = 0f;
 
     
 
@@ -59,13 +59,13 @@ public class TopDownCharacterController : MonoBehaviour
     private void Awake()
     {
         //bind movement inputs to variables
-        m_moveAction = InputSystem.actions.FindAction("Move");
-        m_attackAction = InputSystem.actions.FindAction("Attack");
-        m_sprintAction = InputSystem.actions.FindAction("Sprint");
-        m_rollAction = InputSystem.actions.FindAction("Roll");
+        moveAction = InputSystem.actions.FindAction("Move");
+        attackAction = InputSystem.actions.FindAction("Attack");
+        sprintAction = InputSystem.actions.FindAction("Sprint");
+        rollAction = InputSystem.actions.FindAction("Roll");
 
         //get components from Character game object so that we can use them later.
-        m_animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         m_rigidbody = GetComponent<Rigidbody2D>();
 
     }
@@ -86,10 +86,10 @@ public class TopDownCharacterController : MonoBehaviour
     {
 
         //clamp the speed to the maximum speed for if the speed has been changed in code.
-        float speed = m_playerSpeed > m_playerMaxSpeed ? m_playerMaxSpeed : m_playerSpeed;
+        float speed = playerSpeed > playerMaxSpeed ? playerMaxSpeed : playerSpeed;
         
         //apply the movement to the character using the clamped speed value.
-        m_rigidbody.linearVelocity = m_playerDirection * (speed * Time.fixedDeltaTime);
+        m_rigidbody.linearVelocity = playerDirection * (speed * Time.fixedDeltaTime);
     }
     
     /// <summary>
@@ -102,34 +102,34 @@ public class TopDownCharacterController : MonoBehaviour
         
 
         // store any movement inputs into m_playerDirection - this will be used in FixedUpdate to move the player.
-        m_playerDirection = m_moveAction.ReadValue<Vector2>();
+        playerDirection = moveAction.ReadValue<Vector2>();
         
         // ~~ handle animator ~~
         // Update the animator speed to ensure that we revert to idle if the player doesn't move.
-        m_animator.SetFloat("Speed", m_playerDirection.magnitude);
+        animator.SetFloat("Speed", playerDirection.magnitude);
         
         // If there is movement, set the directional values to ensure the character is facing the way they are moving.
-        if (m_playerDirection.magnitude > 0)
+        if (playerDirection.magnitude > 0)
         {
-            m_animator.SetFloat("Horizontal", m_playerDirection.x);
-            m_animator.SetFloat("Vertical", m_playerDirection.y);
+            animator.SetFloat("Horizontal", playerDirection.x);
+            animator.SetFloat("Vertical", playerDirection.y);
             canSprint = true;
 
-            m_lastDirection = m_playerDirection;
+            lastDirection = playerDirection;
         }
         else 
         {
             canSprint = false;
         }
 
-        if (m_rollAction.WasPressedThisFrame())
+        if (rollAction.WasPressedThisFrame())
         {
-            m_animator.SetTrigger("Roll");
+            animator.SetTrigger("Roll");
         }
 
         if (canSprint == true)
         {
-            if (m_sprintAction.IsPressed())
+            if (sprintAction.IsPressed())
             {
                 
                 stamina -= sprintCost * Time.deltaTime;
@@ -138,12 +138,12 @@ public class TopDownCharacterController : MonoBehaviour
                 {
                     canSprint = false;
                     Debug.Log("Out of stamina!");
-                    m_playerSpeed = 200f;
+                    playerSpeed = 200f;
                 }
                 else
                 {
                     Debug.Log("Stamina: " + stamina);
-                    m_playerSpeed = m_sprintSpeed;
+                    playerSpeed = sprintSpeed;
                 }
             }
         }
@@ -154,32 +154,32 @@ public class TopDownCharacterController : MonoBehaviour
                 stamina += staminaRegen * Time.deltaTime;
                 Debug.Log("Stamina: " + stamina);
             }
-            m_playerSpeed = 200f;
+            playerSpeed = 200f;
         }
         // check if an attack has been triggered.
-        if (m_attackAction.IsPressed() && Time.time > m_nextFireTime)
+        if (attackAction.IsPressed() && Time.time > nextFireTime)
         {
-            m_nextFireTime = Time.time + m_fireRate;
+            nextFireTime = Time.time + fireRate;
             Fire();
         }
     }
 
     private void Fire()
     {
-        Vector2 MousePosition = Mouse.current.position.ReadValue();
-        Vector3 mousePointOnScreen = Camera.main.ScreenToWorldPoint(MousePosition);
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Vector3 mousePointOnScreen = Camera.main.ScreenToWorldPoint(mousePosition);
 
         Vector2 fireDirection = mousePointOnScreen;
         if (fireDirection == Vector2.zero)
         {
             fireDirection = Vector2.down; // Default direction if no movement
         }
-        GameObject spawnedProjectile = Instantiate(m_projectilePrefab, m_projectileSpawnPoint.position, Quaternion.identity);
+        GameObject spawnedProjectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
 
         Rigidbody2D projectileRB = spawnedProjectile.GetComponent<Rigidbody2D>();
         if (projectileRB != null)
         {
-            projectileRB.AddForce(fireDirection.normalized * m_projectileSpeed, ForceMode2D.Impulse);
+            projectileRB.AddForce(fireDirection.normalized * projectileSpeed, ForceMode2D.Impulse);
         }
     }
 }
