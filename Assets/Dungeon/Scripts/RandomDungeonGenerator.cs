@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class RandomDungeonGenerator : AbstractDungeonGenerator
 {
-    [SerializeField] protected SimpleRandomDungeonData RandomDungeonData;
+    [SerializeField] protected SimpleRandomDungeonData[] RandomDungeonData;
+    [SerializeField] protected DungeonData dungeonData;
 
     protected override void RunProceduralGeneration()
     {
@@ -15,15 +16,15 @@ public class RandomDungeonGenerator : AbstractDungeonGenerator
         WallGenerator.CreateWalls(floorPositions, tileMapGenerator);
     }
 
-    protected HashSet<Vector2Int> RunRandomWalks(SimpleRandomDungeonData data, Vector2Int position)
+    protected HashSet<Vector2Int> RunRandomWalks(SimpleRandomDungeonData[] data, Vector2Int position)
     {
         var currentPosition = position;
         HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
-        for (int i = 0; i < RandomDungeonData.iterations; i++)
+        for (int i = 0; i < RandomDungeonData[UnityEngine.Random.Range(0, RandomDungeonData.Length)].iterations; i++)
         {
-            var path = ProceduralGenerationAlgorithms.RandomWalk(currentPosition, RandomDungeonData.walkLength);
+            var path = ProceduralGenerationAlgorithms.RandomWalk(currentPosition, RandomDungeonData[UnityEngine.Random.Range(0, RandomDungeonData.Length)].walkLength);
             floorPositions.UnionWith(path);
-            if (RandomDungeonData.startRandomly)
+            if (RandomDungeonData[UnityEngine.Random.Range(0, RandomDungeonData.Length)].startRandomly)
             {
                 currentPosition = floorPositions.ElementAt(UnityEngine.Random.Range(0, floorPositions.Count));
             }
