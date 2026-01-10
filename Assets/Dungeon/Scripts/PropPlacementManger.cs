@@ -10,9 +10,6 @@ public class PropPlacementManager : MonoBehaviour
     DungeonData dungeonData;
 
     [SerializeField] private List<Prop> propsToPlace;
-
-    [SerializeField, Range(0, 1)] private float cornerPropPlacementChance = 0.7f;
-
     [SerializeField] private GameObject propPrefab;
 
     public UnityEvent OnFinished;
@@ -116,7 +113,7 @@ public class PropPlacementManager : MonoBehaviour
 
                 if (UnityEngine.Random.value > chance)
                     continue;
-            
+
 
                 //remove taken positions
                 tempPositons.ExceptWith(room.PropPositions);
@@ -281,7 +278,7 @@ public class PropPlacementManager : MonoBehaviour
     }
 
 
-    private object DistanceToClosestPath(Vector2Int from)
+    private int DistanceToClosestPath(Vector2Int from)
     {
         if (dungeonData == null || dungeonData.path == null || dungeonData.path.Count == 0)
             return int.MaxValue;
@@ -418,8 +415,14 @@ public class PropPlacementManager : MonoBehaviour
             = (Vector2)propToPlace.PropSize * 0.5f;
 
         //Save the prop in the room data (so in the dungeon data)
-        room.PropPositions.Add(placementPostion);
         room.PropObjectReferences.Add(prop);
+
+        if (propToPlace.Destructible)
+        {
+            var destruct = prop.AddComponent<DestructibleProp>();
+            destruct.Init(propToPlace, room, dungeonData, placementPostion);
+        }
+
         return prop;
     }
 }

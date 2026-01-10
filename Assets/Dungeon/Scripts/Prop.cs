@@ -13,12 +13,12 @@ public class Prop : ScriptableObject
     public Vector2Int PropSize = Vector2Int.one;
 
     [Space, Header("Placement type:")]
-    public bool Corner = true;
-    public bool NearWallUP = true;
-    public bool NearWallDown = true;
-    public bool NearWallRight = true;
-    public bool NearWallLeft = true;
-    public bool Inner = true;
+    public bool Corner;
+    public bool NearWallUP;
+    public bool NearWallDown;
+    public bool NearWallRight;
+    public bool NearWallLeft;
+    public bool Inner;
     [Min(1)]
     public int PlacementQuantityMin = 1;
     [Min(1)]
@@ -31,6 +31,11 @@ public class Prop : ScriptableObject
     [Min(1)]
     public int GroupMaxCount = 1;
 
+    [Space, Header("Destructability:")]
+    public bool Destructible;
+    public int MaxHP = 1;
+
+    [Space, Header("Spawn settings:")]
     [Range(0, 1f)] public float spawnChance = 1f;
     public bool hasColliders = true;
     public bool OnlyCorner;

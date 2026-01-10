@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e194b494d70fe3247896986307f34b71, type: 3}
   m_Name: SilverChests
   m_EditorClassIdentifier: 
-  PropSprite: {fileID: 21300000, guid: d175758a0d49d97439b55516f5963085, type: 2}
+  PropSprite: {fileID: 21300000, guid: 7f962e7b774543e4fb2562f6d194f2c1, type: 2}
   PropSize: {x: 1, y: 1}
   Corner: 1
   NearWallUP: 0
@@ -25,6 +25,8 @@ MonoBehaviour:
   PlaceAsGroup: 0
   GroupMinCount: 1
   GroupMaxCount: 1
-  spawnChance: 1
+  Destructible: 0
+  MaxHP: 1
+  spawnChance: 0.5
   hasColliders: 1
   OnlyCorner: 1
