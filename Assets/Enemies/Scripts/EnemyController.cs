@@ -59,8 +59,6 @@ public class EnemyController : MonoBehaviour
 
         if (animator != null)
         {
-            float speed01 = rb != null && rb.linearVelocity.sqrMagnitude > 0.001f ? 1f : 0f;
-            animator.SetFloat("Speed", facingDir.magnitude);
             animator.SetFloat("Horizontal", facingDir.x);
             animator.SetFloat("Vertical", facingDir.y);
         }
@@ -180,6 +178,7 @@ public class EnemyController : MonoBehaviour
 
         // Chase
         Vector2 step = facingDir * moveSpeed * Time.fixedDeltaTime;
+        animator.SetFloat("Speed", facingDir.magnitude);
         rb.MovePosition(rb.position + step);
     }
 

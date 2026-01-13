@@ -8,6 +8,7 @@ public class EnemyTypeSO : ScriptableObject
     [Header("Identity")]
     public string enemyName;
     public Sprite defaultSprite;
+    public AnimatorOverrideController defaultAnimator;
 
     [Header("Base Stats")]
     public int baseHP = 10;

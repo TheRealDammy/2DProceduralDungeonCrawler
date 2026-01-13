@@ -6,13 +6,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public int MaxHP { get; private set; }
     public int CurrentHP { get; private set; }
 
-    [Header("Flash")]
-    [SerializeField] private float flashTime = 0.06f;
-
     [Header("Death")]
     [SerializeField] private float destroyDelay = 0.35f; // set to your death anim length
-    [SerializeField] private string hurtTrigger = "Hurt";
-    [SerializeField] private string deadTrigger = "Dead";
 
     private SpriteRenderer[] renderers;
     private Color[] originalColors;
@@ -25,7 +20,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        // Grab all renderers so flash always works even with different prefab layouts
         renderers = GetComponentsInChildren<SpriteRenderer>(true);
         originalColors = new Color[renderers.Length];
         for (int i = 0; i < renderers.Length; i++)
@@ -45,17 +39,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public void TakeDamage(int amount, Vector2 hitPoint, Vector2 hitDirection)
     {
+        if (animator != null)
+            animator.SetTrigger("Hurt");
+
         if (isDead) return;
 
         CurrentHP -= Mathf.Max(1, amount);
-
-        // stop only our flash coroutine (not everything on the object)
-        StopCoroutine(nameof(Flash));
-        StartCoroutine(nameof(Flash));
-
-        // optional hurt animation trigger
-        if (animator != null && !string.IsNullOrEmpty(hurtTrigger))
-            animator.SetTrigger(hurtTrigger);
 
         if (CurrentHP <= 0)
         {
@@ -63,21 +52,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    private IEnumerator Flash()
-    {
-        // flash to white
-        for (int i = 0; i < renderers.Length; i++)
-            if (renderers[i] != null) renderers[i].color = Color.white;
-
-        yield return new WaitForSeconds(flashTime);
-
-        // restore
-        for (int i = 0; i < renderers.Length; i++)
-            if (renderers[i] != null) renderers[i].color = originalColors[i];
-    }
-
     private void Die()
     {
+        if (animator != null)
+            animator.SetTrigger("Dead");
+
         if (isDead) return;
         isDead = true;
 
@@ -94,10 +73,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             foreach (var c in colliders)
                 if (c != null) c.enabled = false;
         }
-
-        // play death animation if possible
-        if (animator != null && !string.IsNullOrEmpty(deadTrigger))
-            animator.SetTrigger(deadTrigger);
 
         // destroy after delay so death anim can show
         Destroy(gameObject, Mathf.Max(0f, destroyDelay));

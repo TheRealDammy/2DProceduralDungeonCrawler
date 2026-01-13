@@ -210,10 +210,10 @@ TextureImporter:
       name: Slime1_Hurt_full_0
       rect:
         serializedVersion: 2
-        x: 23
-        y: 213
-        width: 19
-        height: 19
+        x: 0
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -232,10 +232,10 @@ TextureImporter:
       name: Slime1_Hurt_full_1
       rect:
         serializedVersion: 2
-        x: 85
-        y: 213
-        width: 22
-        height: 19
+        x: 64
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -254,10 +254,10 @@ TextureImporter:
       name: Slime1_Hurt_full_2
       rect:
         serializedVersion: 2
-        x: 147
-        y: 213
-        width: 25
-        height: 16
+        x: 128
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -276,10 +276,10 @@ TextureImporter:
       name: Slime1_Hurt_full_3
       rect:
         serializedVersion: 2
-        x: 148
-        y: 226
-        width: 6
-        height: 6
+        x: 192
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -298,10 +298,10 @@ TextureImporter:
       name: Slime1_Hurt_full_4
       rect:
         serializedVersion: 2
-        x: 164
-        y: 228
-        width: 6
-        height: 6
+        x: 256
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -320,10 +320,10 @@ TextureImporter:
       name: Slime1_Hurt_full_5
       rect:
         serializedVersion: 2
-        x: 210
-        y: 213
-        width: 26
-        height: 22
+        x: 0
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -342,10 +342,10 @@ TextureImporter:
       name: Slime1_Hurt_full_6
       rect:
         serializedVersion: 2
-        x: 274
-        y: 213
-        width: 28
-        height: 22
+        x: 64
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -364,10 +364,10 @@ TextureImporter:
       name: Slime1_Hurt_full_7
       rect:
         serializedVersion: 2
-        x: 23
-        y: 149
-        width: 19
-        height: 19
+        x: 128
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -386,10 +386,10 @@ TextureImporter:
       name: Slime1_Hurt_full_8
       rect:
         serializedVersion: 2
-        x: 86
-        y: 149
-        width: 22
-        height: 19
+        x: 192
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -408,10 +408,10 @@ TextureImporter:
       name: Slime1_Hurt_full_9
       rect:
         serializedVersion: 2
-        x: 149
-        y: 149
-        width: 25
-        height: 16
+        x: 256
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -430,10 +430,10 @@ TextureImporter:
       name: Slime1_Hurt_full_10
       rect:
         serializedVersion: 2
-        x: 151
-        y: 164
-        width: 6
-        height: 6
+        x: 0
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -452,10 +452,10 @@ TextureImporter:
       name: Slime1_Hurt_full_11
       rect:
         serializedVersion: 2
-        x: 167
-        y: 162
-        width: 6
-        height: 6
+        x: 64
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -474,10 +474,10 @@ TextureImporter:
       name: Slime1_Hurt_full_12
       rect:
         serializedVersion: 2
-        x: 213
-        y: 149
-        width: 26
-        height: 22
+        x: 128
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -496,10 +496,10 @@ TextureImporter:
       name: Slime1_Hurt_full_13
       rect:
         serializedVersion: 2
-        x: 275
-        y: 149
-        width: 28
-        height: 22
+        x: 192
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -518,10 +518,10 @@ TextureImporter:
       name: Slime1_Hurt_full_14
       rect:
         serializedVersion: 2
-        x: 23
-        y: 85
-        width: 19
-        height: 19
+        x: 256
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -540,10 +540,10 @@ TextureImporter:
       name: Slime1_Hurt_full_15
       rect:
         serializedVersion: 2
-        x: 86
-        y: 85
-        width: 21
-        height: 19
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -562,10 +562,10 @@ TextureImporter:
       name: Slime1_Hurt_full_16
       rect:
         serializedVersion: 2
-        x: 149
-        y: 85
-        width: 23
-        height: 16
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -584,10 +584,10 @@ TextureImporter:
       name: Slime1_Hurt_full_17
       rect:
         serializedVersion: 2
-        x: 150
-        y: 98
-        width: 6
-        height: 6
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -606,10 +606,10 @@ TextureImporter:
       name: Slime1_Hurt_full_18
       rect:
         serializedVersion: 2
-        x: 164
-        y: 100
-        width: 6
-        height: 6
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -628,10 +628,10 @@ TextureImporter:
       name: Slime1_Hurt_full_19
       rect:
         serializedVersion: 2
-        x: 212
-        y: 85
-        width: 24
-        height: 22
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -646,187 +646,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_20
-      rect:
-        serializedVersion: 2
-        x: 276
-        y: 85
-        width: 26
-        height: 22
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: de9888208f78cc0b0800000000000000
-      internalID: -5707037128521119251
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_21
-      rect:
-        serializedVersion: 2
-        x: 23
-        y: 21
-        width: 19
-        height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a7b380d58e994f180800000000000000
-      internalID: -9082465325227164806
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_22
-      rect:
-        serializedVersion: 2
-        x: 86
-        y: 21
-        width: 21
-        height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 02bba01ee33e22020800000000000000
-      internalID: 2315663017624910624
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_23
-      rect:
-        serializedVersion: 2
-        x: 149
-        y: 21
-        width: 23
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b9ccb58ebedd61ed0800000000000000
-      internalID: -2443521742516532069
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_24
-      rect:
-        serializedVersion: 2
-        x: 151
-        y: 36
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bd88e9a4352216f00800000000000000
-      internalID: 1108204724439386331
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_25
-      rect:
-        serializedVersion: 2
-        x: 165
-        y: 34
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5a654d2b1431ff480800000000000000
-      internalID: -8863344368747784539
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_26
-      rect:
-        serializedVersion: 2
-        x: 213
-        y: 21
-        width: 24
-        height: 22
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 78376c6d0e5e63950800000000000000
-      internalID: 6428578271956726663
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Slime1_Hurt_full_27
-      rect:
-        serializedVersion: 2
-        x: 275
-        y: 21
-        width: 26
-        height: 22
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cdfdf7c0066ecdcd0800000000000000
-      internalID: -2531895590288105508
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 21a307d2aafa7fe498c7f64bac0cc9ae
     internalID: 0
     vertices: []
     indices: 
@@ -834,7 +658,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       Slime1_Hurt_full_0: -6628058897153280068
       Slime1_Hurt_full_1: -7242281903265138765
@@ -849,14 +675,6 @@ TextureImporter:
       Slime1_Hurt_full_18: -2497030925836536157
       Slime1_Hurt_full_19: 6361225188639110788
       Slime1_Hurt_full_2: 2690959153432485087
-      Slime1_Hurt_full_20: -5707037128521119251
-      Slime1_Hurt_full_21: -9082465325227164806
-      Slime1_Hurt_full_22: 2315663017624910624
-      Slime1_Hurt_full_23: -2443521742516532069
-      Slime1_Hurt_full_24: 1108204724439386331
-      Slime1_Hurt_full_25: -8863344368747784539
-      Slime1_Hurt_full_26: 6428578271956726663
-      Slime1_Hurt_full_27: -2531895590288105508
       Slime1_Hurt_full_3: 8346277705838263279
       Slime1_Hurt_full_4: 6107351769626708933
       Slime1_Hurt_full_5: -6728424941516333485
