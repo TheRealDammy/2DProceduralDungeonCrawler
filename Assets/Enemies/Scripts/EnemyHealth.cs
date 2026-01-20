@@ -34,15 +34,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         MaxHP = Mathf.Max(1, maxHp);
         CurrentHP = MaxHP;
-        isDead = false;
     }
 
     public void TakeDamage(int amount, Vector2 hitPoint, Vector2 hitDirection)
     {
         if (animator != null)
             animator.SetTrigger("Hurt");
-
-        if (isDead) return;
 
         CurrentHP -= Mathf.Max(1, amount);
 
@@ -55,10 +52,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private void Die()
     {
         if (animator != null)
-            animator.SetTrigger("Dead");
-
-        if (isDead) return;
-        isDead = true;
+        {
+            animator.SetBool("isDead", true);
+        }
 
         // stop movement immediately
         if (rb != null)

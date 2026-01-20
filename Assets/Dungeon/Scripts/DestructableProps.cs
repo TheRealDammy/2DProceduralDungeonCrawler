@@ -29,7 +29,7 @@ public class DestructibleProp : MonoBehaviour, IDamageable
 
     private void Break()
     {
-        Vector2 explosionPosition = anchorTile;
+        Vector3 explosionPosition = transform.position;
 
         VFXManager.CreateExplosion(explosionPosition);
 

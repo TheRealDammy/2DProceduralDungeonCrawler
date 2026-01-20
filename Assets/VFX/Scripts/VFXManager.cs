@@ -27,7 +27,7 @@ public class VFXManager : MonoBehaviour
     /// <param name="destroyAfter">The number of seconds to pass before destroying the explosion</param>
     /// <returns>A refrence to the explosion gameObject that has spawned</returns>
     
-    public static GameObject CreateExplosion(Vector2 position, float destroyAfter = 2f)
+    public static GameObject CreateExplosion(Vector3 position, float destroyAfter = 2f)
     {
         if (Instance == null || Instance.explosionPrefab == null)
         {

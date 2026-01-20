@@ -14,11 +14,6 @@ public class TopDownCharacterController : MonoBehaviour
 {
     #region Framework Variables
 
-    //The inputs that we need to retrieve from the input system.
-    private InputAction moveAction;
-    private InputAction attackAction;
-    public InputAction sprintAction;
-
     //The components that we need to edit to make the player move smoothly.
     private Animator animator;
     private Rigidbody2D m_rigidbody;
@@ -33,7 +28,8 @@ public class TopDownCharacterController : MonoBehaviour
     [SerializeField] private float playerSpeed = 200f;
     //The maximum speed the player can move
     [SerializeField] private float playerMaxSpeed = 1000f;
-    [SerializeField] private float sprintSpeed = 400f;
+    [SerializeField] private float sprintSpeed = 400f; 
+    public bool isSprinting;
 
     #endregion
 
@@ -59,9 +55,9 @@ public class TopDownCharacterController : MonoBehaviour
     [SerializeField] private float knockbackForce = 0f;
 
     private float lastAttackTime = -999f;
-    private bool isAttacking = false;
+    private bool isAttacking;
 
-    private Stamina staminacComponent;
+    private Stamina staminaComponent;
 
     /// <summary>
     /// When the script first initialises this gets called.
@@ -69,15 +65,11 @@ public class TopDownCharacterController : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        //bind movement inputs to variables
-        moveAction = InputSystem.actions.FindAction("Move");
-        attackAction = InputSystem.actions.FindAction("Attack");
-        sprintAction = InputSystem.actions.FindAction("Sprint");
 
         //get components from Character game object so that we can use them later.
         animator = GetComponent<Animator>();
         m_rigidbody = GetComponent<Rigidbody2D>();
-        staminacComponent = GetComponent<Stamina>();
+        staminaComponent = GetComponent<Stamina>();
     }
 
     /// <summary>
@@ -114,60 +106,81 @@ public class TopDownCharacterController : MonoBehaviour
     /// </summary>
     void Update()
     {
+        staminaComponent.UpdateStamina();
+    }
+
+    public void HandleMove(InputAction.CallbackContext ctx)
+    {
         if (isAttacking)
         {
             playerDirection = Vector2.zero;
             return;
         }
 
-        // store any movement inputs into m_playerDirection - this will be used in FixedUpdate to move the player.
-        Vector2 input = moveAction.ReadValue<Vector2>();
-
-        // Clamp diagonals: allow only one axis
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-            input.y = 0;
-        else
-            input.x = 0;
-
-        playerDirection = input;
-        
-        // ~~ handle animator ~~
-        // Update the animator speed to ensure that we revert to idle if the player doesn't move.
-        animator.SetFloat("Speed", playerDirection.magnitude);
-        
-        // If there is movement, set the directional values to ensure the character is facing the way they are moving.
-        if (playerDirection.magnitude > 0)
+        if (ctx.performed)
         {
-            animator.SetFloat("Horizontal", playerDirection.x);
-            animator.SetFloat("Vertical", playerDirection.y);
+            Vector2 input = ctx.ReadValue<Vector2>();
 
-            lastDirection = playerDirection;
+            // Clamp diagonals: allow only one axis
+            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+                input.y = 0;
+            else
+                input.x = 0;
+
+            playerDirection = input;
+
+            // ~~ handle animator ~~
+            // Update the animator speed to ensure that we revert to idle if the player doesn't move.
+            animator.SetFloat("Speed", playerDirection.magnitude);
+
+            // If there is movement, set the directional values to ensure the character is facing the way they are moving.
+            if (playerDirection.magnitude > 0)
+            {
+                animator.SetFloat("Horizontal", playerDirection.x);
+                animator.SetFloat("Vertical", playerDirection.y);
+
+                lastDirection = playerDirection;
+            }          
         }
-
-        if (sprintAction.IsPressed())
+        else if (ctx.canceled)
         {
-            
-            if (staminacComponent != null)
+            playerDirection = Vector2.zero;
+
+            // ~~ handle animator ~~
+            // Update the animator speed to ensure that we revert to idle if the player doesn't move.
+            animator.SetFloat("Speed", playerDirection.magnitude);
+
+            // If there is no movement, keep the last directional values to ensure the character is still facing the way they were moving.
+            animator.SetFloat("Horizontal", lastDirection.x);
+            animator.SetFloat("Vertical", lastDirection.y);   
+        }
+    }
+
+    public void HandleSprint(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            if (staminaComponent != null)
             {
                 playerSpeed = sprintSpeed;
-                staminacComponent.UpdateStamina();
-                Debug.Log("Using Stamina");
-            }             
+                isSprinting = true;                           
+            }
         }
         else
         {
-            if (staminacComponent != null)
+            if (staminaComponent != null)
             {
-                staminacComponent.UpdateStamina();
                 playerSpeed = 200f;
-            }       
-        }
+                isSprinting = false;     
+            }
+        }   
+    }
 
-        // check if an attack has been triggered.
-        if (attackAction.IsPressed())
+    public void HandleAttack(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
         {
             TryAttack();
-            playerDirection = Vector2.zero; // stop movement when attacking
         }
     }
 

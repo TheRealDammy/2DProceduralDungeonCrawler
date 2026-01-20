@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class Stamina : MonoBehaviour
 {
-    [SerializeField] private Image staminaBar;
+    public Image staminaBar;
 
 
     private float minStamina = 0f;
@@ -56,12 +56,14 @@ public class Stamina : MonoBehaviour
         {
             RegenerateStamina();
         }
+
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerController.playerDirection.magnitude > 0 && playerController.sprintAction.IsPressed())
+        if (playerController.playerDirection.magnitude > 0 && playerController.isSprinting == true)
         {
             canSprint = true;
         }
