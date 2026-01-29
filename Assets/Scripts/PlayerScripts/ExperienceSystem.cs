@@ -4,68 +4,69 @@ using UnityEngine.UI;
 
 public class ExperienceSystem : MonoBehaviour
 {
-    private int experiencePoints = 0;
-    private int level = 0;
-    [SerializeField] private int experienceToNextLevel = 100;
-    [SerializeField] private int experienceGrowthRate = 50;
-    [SerializeField] private int maxLevel = 40;
+    [SerializeField] private int level = 1;
+    [SerializeField] private int currentXP;
+    [SerializeField] private int xpToNext = 100;
+    [SerializeField] private int xpGrowth = 50;
     [SerializeField] private int statPointsPerLevel = 5;
-    private int currentStatPoints = 0;
 
-    [SerializeField] private Image expBar;
+    private int currentStatPoints;
+
+    [Header("UI")]
+    [SerializeField] private Image xpBar;
     [SerializeField] private TextMeshProUGUI levelText;
 
-    public void Awake()
+    private void Start()
     {
-        expBar.fillAmount = experiencePoints / (float)experienceToNextLevel;
-        levelText.text = $"Level {level}";
+        UpdateUI();
     }
 
-    public void AddExperience(int amount)
+    public void AddXP(int amount)
     {
-        if (level >= maxLevel)
-            return;
-        experiencePoints += amount;
-        while (experiencePoints >= experienceToNextLevel && level < maxLevel)
+        currentXP += amount;
+
+        while (currentXP >= xpToNext)
         {
-            experiencePoints -= experienceToNextLevel;
+            currentXP -= xpToNext;
             LevelUp();
         }
 
-        expBar.fillAmount = experiencePoints / (float)experienceToNextLevel;
-
-        Debug.Log($"Gained {amount} XP. Current XP: {experiencePoints}/{experienceToNextLevel}");
+        UpdateUI();
     }
 
-    public void LevelUp()
+    private void LevelUp()
     {
         level++;
         currentStatPoints += statPointsPerLevel;
-        experienceToNextLevel += experienceGrowthRate;
-        levelText.text = $"Level {level}";
-        Debug.Log($"Leveled up to {level}! Stat points available: {currentStatPoints}");
+        xpToNext += xpGrowth;
+        Debug.Log($"Leveled up to {level}! You have {currentStatPoints} stat points to spend.");
     }
 
-    public bool SpendStatPoints(int points)
+    public bool SpendStatPoint()
     {
-        if (points <= currentStatPoints)
-        {
-            currentStatPoints -= points;
-            return true;
-        }
-        return false;
+        if (currentStatPoints <= 0) return false;
+        currentStatPoints--;
+        return true;
     }
 
-    public void ResetExperience()
-    {
-        experiencePoints = 0;
-        level = 0;
-        experienceToNextLevel = 100;
-        currentStatPoints = 0;
-    }
-
-    public int GetCurrentStatPoints()
+    public int GetStatPoints()
     {
         return currentStatPoints;
+    }
+
+    public void RefundStatPoint()
+    {
+        currentStatPoints++;
+    }
+
+    public void SetStatPoints(int amount)
+    {
+        currentStatPoints = amount;
+    }
+
+    private void UpdateUI()
+    {
+        xpBar.fillAmount = (float)currentXP / xpToNext;
+        levelText.text = $"Level {level}";
     }
 }

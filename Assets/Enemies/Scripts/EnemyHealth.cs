@@ -86,7 +86,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }   
         if (expSystem != null)
         {
-            expSystem.AddExperience(Mathf.RoundToInt(enemyData.spawnExperience));
+            expSystem.AddXP(Mathf.RoundToInt(enemyData.spawnExperience));
         }
 
         DestroyImmediate(gameObject);

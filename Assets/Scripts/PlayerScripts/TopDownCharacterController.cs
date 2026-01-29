@@ -1,300 +1,239 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
-/// <summary>
-/// A class to control the top-down character.
-/// Implements the player controls for moving and shooting.
-/// Updates the player animator so the character animates based on input.
-/// </summary>
+[RequireComponent(typeof(Rigidbody2D))]
 public class TopDownCharacterController : MonoBehaviour
 {
-    #region Framework Variables
+    [Header("Movement")]
+    [SerializeField] private float baseMoveSpeed = 200f;
+    [SerializeField] private float baseSprintSpeed = 400f;
+    [SerializeField] private float maxSpeed = 1000f;
 
-    //The components that we need to edit to make the player move smoothly.
-    private Animator animator;
-    private Rigidbody2D m_rigidbody;
-    
-    //The direction that the player is moving in.
-    public Vector2 playerDirection;
-    private Vector2 lastDirection;
-   
-
-    [Header("Movement parameters")]
-    //The speed at which the player moves
-    [SerializeField] private float playerSpeed = 200f;
-    //The maximum speed the player can move
-    [SerializeField] private float playerMaxSpeed = 1000f;
-    [SerializeField] private float sprintSpeed = 400f; 
-    public bool isSprinting;
-
-    #endregion
-
-    [Header("Projectile parameters")]
-    [SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private Transform projectileSpawnPoint;
-    [SerializeField] private float projectileSpeed;
-    [SerializeField] private float fireRate;
+    [Header("Stamina")]
+    [SerializeField] private float baseMaxStamina = 100f;
+    [SerializeField] private float baseStaminaRegen = 20f;
+    [SerializeField] private float sprintCost = 30f;
+    [SerializeField] private Image staminaBar;
 
     [Header("Attack")]
-    [SerializeField] private int damage = 1;
-    [SerializeField] private float range = 1.2f;
-    [SerializeField] private float radius = 0.5f;
-    [SerializeField] private float cooldown = 0.35f;
+    [SerializeField] private int baseDamage = 1;
+    [SerializeField] private float attackRange = 1.2f;
+    [SerializeField] private float attackRadius = 0.5f;
+    [SerializeField] private float attackCooldown = 0.35f;
     [SerializeField] private float attackLockTime = 0.45f;
+    [SerializeField] private LayerMask hittableLayers;
+    [SerializeField] private Transform attackOrigin;
 
+    [Header("UI")]
+    [SerializeField] private GameObject inventoryUI;
 
-    [Header("Targeting")]
-    [SerializeField] private LayerMask hittableLayers; // Props + Enemies layers
-    [SerializeField] private Transform attackOrigin;    // empty child transform in front of player
+    private Rigidbody2D rb;
+    private Animator animator;
+    private PlayerStats stats;
 
-    [Header("Knockback (optional)")]
-    [SerializeField] private float knockbackForce = 0f;
+    private Vector2 moveInput;
+    private Vector2 lastDirection = Vector2.down;
 
-    private float lastAttackTime = -999f;
+    private bool isSprinting;
     private bool isAttacking;
-    private PlayerInput playerInput;
+    private bool inventoryOpen;
 
-    private Stamina staminaComponent;
+    private float lastAttackTime;
+    private Coroutine attackLockRoutine;
 
-    [Header("UI Components")]
-    [SerializeField] GameObject inventory;
-    private bool isInventoryOpen = false;
+    private float currentStamina;
+    private float maxStamina;
+    private float staminaRegen;
+    private float moveSpeed;
+    private float sprintSpeed;
+    private int damage;
 
-    /// <summary>
-    /// When the script first initialises this gets called.
-    /// Use this for grabbing components and setting up input bindings.
-    /// </summary>
     private void Awake()
     {
-
-        //get components from Character game object so that we can use them later.
+        rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        m_rigidbody = GetComponent<Rigidbody2D>();
-        staminaComponent = GetComponent<Stamina>();
-        playerInput = GetComponent<PlayerInput>();
+        stats = GetComponent<PlayerStats>();
     }
 
-    /// <summary>
-    /// Called after Awake(), and is used to initialize variables e.g. set values on the player
-    /// </summary>
-    void Start()
+    private void Start()
     {
-        //not currently used - left here for demonstration purposes.
+        ApplyStats();
+        currentStamina = maxStamina;
+        UpdateStaminaUI();
     }
 
-    /// <summary>
-    /// When a fixed update loop is called, it runs at a constant rate, regardless of pc performance.
-    /// This ensures that physics are calculated properly.
-    /// </summary>
+    // =========================
+    // STAT APPLICATION
+    // =========================
+    public void ApplyStats()
+    {
+        moveSpeed = baseMoveSpeed;
+        sprintSpeed = baseSprintSpeed;
+
+        maxStamina = baseMaxStamina + stats.GetStatLevel(PlayerStatType.Stamina) * 15f;
+        staminaRegen = baseStaminaRegen + stats.GetStatLevel(PlayerStatType.Stamina) * 2f;
+
+        damage = baseDamage + stats.GetStatLevel(PlayerStatType.Strength) * 2;
+
+        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+        UpdateStaminaUI();
+    }
+
+    // =========================
+    // MOVEMENT
+    // =========================
     private void FixedUpdate()
     {
         if (isAttacking)
         {
-            m_rigidbody.linearVelocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             return;
         }
 
-        //clamp the speed to the maximum speed for if the speed has been changed in code.
-        float speed = playerSpeed > playerMaxSpeed ? playerMaxSpeed : playerSpeed;
-        
-        //apply the movement to the character using the clamped speed value.
-        m_rigidbody.linearVelocity = playerDirection * (speed * Time.fixedDeltaTime);
-    }
-    
-    /// <summary>
-    /// When the update loop is called, it runs every frame.
-    /// Therefore, this will run more or less frequently depending on performance.
-    /// Used to catch changes in variables or input.
-    /// </summary>
-    void Update()
-    {
-        staminaComponent.UpdateStamina();
+        float speed = isSprinting && currentStamina > 0 ? sprintSpeed : moveSpeed;
+        speed = Mathf.Min(speed, maxSpeed);
+
+        rb.linearVelocity = moveInput * speed * Time.fixedDeltaTime;
     }
 
     public void HandleMove(InputAction.CallbackContext ctx)
     {
-        if (isAttacking)
-        {
-            playerDirection = Vector2.zero;
-            return;
-        }
+        if (isAttacking) return;
 
         if (ctx.performed)
         {
-            Vector2 input = ctx.ReadValue<Vector2>();
+            moveInput = ctx.ReadValue<Vector2>();
 
-            // Clamp diagonals: allow only one axis
-            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                input.y = 0;
+            // Lock to cardinal directions
+            if (Mathf.Abs(moveInput.x) > Mathf.Abs(moveInput.y))
+                moveInput.y = 0;
             else
-                input.x = 0;
+                moveInput.x = 0;
 
-            playerDirection = input;
+            if (moveInput != Vector2.zero)
+                lastDirection = moveInput.normalized;
 
-            // ~~ handle animator ~~
-            // Update the animator speed to ensure that we revert to idle if the player doesn't move.
-            animator.SetFloat("Speed", playerDirection.magnitude);
-
-            // If there is movement, set the directional values to ensure the character is facing the way they are moving.
-            if (playerDirection.magnitude > 0)
-            {
-                animator.SetFloat("Horizontal", playerDirection.x);
-                animator.SetFloat("Vertical", playerDirection.y);
-
-                lastDirection = playerDirection;
-            }          
+            UpdateAnimator();
         }
         else if (ctx.canceled)
         {
-            playerDirection = Vector2.zero;
-
-            // ~~ handle animator ~~
-            // Update the animator speed to ensure that we revert to idle if the player doesn't move.
-            animator.SetFloat("Speed", playerDirection.magnitude);
-
-            // If there is no movement, keep the last directional values to ensure the character is still facing the way they were moving.
-            animator.SetFloat("Horizontal", lastDirection.x);
-            animator.SetFloat("Vertical", lastDirection.y);   
+            moveInput = Vector2.zero;
+            UpdateAnimator();
         }
     }
 
+    // =========================
+    // SPRINT / STAMINA
+    // =========================
     public void HandleSprint(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        isSprinting = ctx.performed;
+    }
+
+    private void Update()
+    {
+        HandleStamina();
+    }
+
+    private void HandleStamina()
+    {
+        if (isSprinting && moveInput.magnitude > 0 && currentStamina > 0)
         {
-            if (staminaComponent != null)
-            {
-                playerSpeed = sprintSpeed;
-                isSprinting = true;                           
-            }
+            currentStamina -= sprintCost * Time.deltaTime;
         }
         else
         {
-            if (staminaComponent != null)
-            {
-                playerSpeed = 200f;
-                isSprinting = false;     
-            }
-        }   
+            currentStamina += staminaRegen * Time.deltaTime;
+        }
+
+        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+        UpdateStaminaUI();
     }
 
+    private void UpdateStaminaUI()
+    {
+        if (staminaBar)
+            staminaBar.fillAmount = currentStamina / maxStamina;
+    }
+
+    // =========================
+    // ATTACK
+    // =========================
     public void HandleAttack(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
-        {
             TryAttack();
-        }
     }
 
-    public void HandleInteract(InputAction.CallbackContext ctx)
+    private void TryAttack()
     {
-        if (ctx.performed)
-        {
-            Interact();
-        }
-    }
+        if (Time.time < lastAttackTime + attackCooldown) return;
 
-    public void HandleOpenInventory(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            OpenInventory();
-        }
-    }
-
-    private void Fire()
-    {
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Vector3 mousePointOnScreen = Camera.main.ScreenToWorldPoint(mousePosition);
-
-        Vector2 fireDirection = mousePointOnScreen;
-        if (fireDirection == Vector2.zero)
-        {
-            fireDirection = Vector2.down; // Default direction if no movement
-        }
-        GameObject spawnedProjectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
-
-        Rigidbody2D projectileRB = spawnedProjectile.GetComponent<Rigidbody2D>();
-        if (projectileRB != null)
-        {
-            projectileRB.AddForce(fireDirection.normalized * projectileSpeed, ForceMode2D.Impulse);
-        }
-    }
-
-    public void OpenInventory()
-    {
-        if (isInventoryOpen)
-        {
-            inventory.SetActive(false);
-            isInventoryOpen = false;
-        }
-        else
-        {
-            inventory.SetActive(true);
-            isInventoryOpen = true;
-        }
-    }
-
-    public void Interact()
-    {
-        // Interaction logic can be implemented here
-        Debug.Log("Interact method called.");
-    }
-
-    public void TryAttack()
-    {
-        if (Time.time < lastAttackTime + cooldown) return;
         lastAttackTime = Time.time;
-
         animator.SetTrigger("Attack");
 
-        Vector2 origin = attackOrigin != null ? (Vector2)attackOrigin.position : (Vector2)transform.position;
-        Vector2 center = origin + playerDirection.normalized * range;
+        Vector2 origin = attackOrigin ? (Vector2)attackOrigin.position : (Vector2)transform.position;
+        Vector2 center = origin + lastDirection * attackRange;
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(center, radius, hittableLayers);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(center, attackRadius, hittableLayers);
 
-        for (int i = 0; i < hits.Length; i++)
+        foreach (var hit in hits)
         {
-            var col = hits[i];
-
-            // damage
-            var dmg = col.GetComponentInParent<IDamageable>();
+            IDamageable dmg = hit.GetComponentInParent<IDamageable>();
             if (dmg != null)
             {
-                Vector2 hitPoint = col.ClosestPoint(center);
-                dmg.TakeDamage(damage, hitPoint, playerDirection.normalized);
-            }
-
-            // optional knockback if it has a rigidbody
-            if (knockbackForce > 0f)
-            {
-                var rb = col.attachedRigidbody;
-                if (rb != null)
-                    rb.AddForce(playerDirection.normalized * knockbackForce, ForceMode2D.Impulse);
+                Vector2 hitPoint = hit.ClosestPoint(center);
+                dmg.TakeDamage(damage, hitPoint, lastDirection);
             }
         }
-        StartAttackLock(attackLockTime);
+
+        StartAttackLock();
     }
-    public void StartAttackLock(float duration)
+
+    private void StartAttackLock()
     {
         if (attackLockRoutine != null)
             StopCoroutine(attackLockRoutine);
 
-        attackLockRoutine = StartCoroutine(AttackLockRoutine(duration));
+        attackLockRoutine = StartCoroutine(AttackLock());
     }
 
-    private Coroutine attackLockRoutine;
-
-    private IEnumerator AttackLockRoutine(float duration)
+    private IEnumerator AttackLock()
     {
         isAttacking = true;
-        playerDirection = Vector2.zero;
-        m_rigidbody.linearVelocity = Vector2.zero;
-
-        yield return new WaitForSeconds(duration);
-
+        rb.linearVelocity = Vector2.zero;
+        yield return new WaitForSeconds(attackLockTime);
         isAttacking = false;
     }
 
+    // =========================
+    // INVENTORY
+    // =========================
+    public void HandleOpenInventory(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.performed) return;
+
+        if (inventoryOpen)
+        {
+            inventoryUI.SetActive(false);
+            inventoryOpen = false;
+        }
+        else
+        {
+            inventoryUI.SetActive(true);
+            inventoryOpen = true;
+        }
+    }
+
+    // =========================
+    // ANIMATION
+    // =========================
+    private void UpdateAnimator()
+    {
+        animator.SetFloat("Speed", moveInput.magnitude);
+        animator.SetFloat("Horizontal", lastDirection.x);
+        animator.SetFloat("Vertical", lastDirection.y);
+    }
 }

@@ -1,46 +1,80 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float maxHealth = 100f;
+    [Header("Base Health")]
+    [SerializeField] private float baseHealth = 100f;
+
+    [Header("Damage Handling")]
     [SerializeField] private float iFrames = 0.5f;
     [SerializeField] private float flashTime = 0.06f;
 
+    [Header("UI")]
+    [SerializeField] private Image healthBar;
+
+    private float maxHealth;
     private float currentHealth;
     private bool invincible;
-    private SpriteRenderer sr;
-    private Color original;
 
-    [SerializeField] private Image healthBar;
+    private SpriteRenderer sr;
+    private Color originalColor;
+
+    private PlayerStats stats;
     private ExperienceSystem expSystem;
 
-    void Start()
-    {
-        currentHealth = maxHealth;
-    }
-
-    void Update()
-    {
-        healthBar.fillAmount = currentHealth / maxHealth;
-    }
-
+    // =========================
+    // INITIALIZATION
+    // =========================
     private void Awake()
     {
-        currentHealth = maxHealth;
-        sr = GetComponent<SpriteRenderer>();
+        stats = GetComponent<PlayerStats>();
         expSystem = GetComponent<ExperienceSystem>();
-        if (sr) original = sr.color;
+        sr = GetComponent<SpriteRenderer>();
+        maxHealth = baseHealth;
+        currentHealth = maxHealth;
+
+        if (sr)
+            originalColor = sr.color;
+
+        ApplyStats(true);
     }
 
+    // =========================
+    // STAT APPLICATION
+    // =========================
+    public void ApplyStats(bool fullHeal = false)
+    {
+        float oldMax = maxHealth;
+
+        maxHealth = baseHealth + stats.GetStatLevel(PlayerStatType.Health) * 20f;
+
+        if (fullHeal || oldMax <= 0)
+            currentHealth = maxHealth;
+        else
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        UpdateHealthUI();
+    }
+
+    // =========================
+    // DAMAGE
+    // =========================
     public void TakeDamage(int amount, Vector2 hitPoint, Vector2 hitDirection)
     {
         if (invincible) return;
 
-        currentHealth -= Mathf.Max(1, amount);
-        if (sr) StartCoroutine(Flash());
-        StartCoroutine(IFrames());
+        int finalDamage = CalculateReducedDamage(amount);
+        currentHealth -= finalDamage;
+
+        UpdateHealthUI();
+
+        if (sr)
+            StartCoroutine(Flash());
+
+        StartCoroutine(IFrames());    
 
         if (currentHealth <= 0)
         {
@@ -48,6 +82,26 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
     }
 
+    private int CalculateReducedDamage(int incoming)
+    {
+        float reductionPercent = stats.GetStatLevel(PlayerStatType.Durability) * 0.04f;
+        reductionPercent = Mathf.Clamp01(reductionPercent);
+
+        return Mathf.Max(1, Mathf.RoundToInt(incoming * (1f - reductionPercent)));
+    }
+
+    // =========================
+    // HEALING
+    // =========================
+    public void Heal(int amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        UpdateHealthUI();
+    }
+
+    // =========================
+    // FEEDBACK
+    // =========================
     private IEnumerator IFrames()
     {
         invincible = true;
@@ -59,24 +113,24 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         sr.color = Color.red;
         yield return new WaitForSeconds(flashTime);
-        sr.color = original;
+        sr.color = originalColor;
     }
 
-    public void Heal(int amount)
+    // =========================
+    // UI
+    // =========================
+    private void UpdateHealthUI()
     {
-        currentHealth += amount;
-        if (currentHealth > maxHealth)
-        {
-            currentHealth = maxHealth;
-        }
+        healthBar.fillAmount = currentHealth / maxHealth;
+        Debug.Log($"Health: {currentHealth}/{maxHealth}");
     }
 
-    public void Die()
+    // =========================
+    // DEATH
+    // =========================
+    private void Die()
     {
-        expSystem.ResetExperience();
-
-        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("DeathScene");
-
-        DestroyImmediate(gameObject);
+        SceneManager.LoadSceneAsync("DeathScene");
+        enabled = false;
     }
 }

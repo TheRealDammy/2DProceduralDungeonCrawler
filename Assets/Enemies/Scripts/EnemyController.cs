@@ -60,7 +60,6 @@ public class EnemyController : MonoBehaviour
 
         if (health == null) Debug.LogError("EnemyController: EnemyHealth missing.", this);
         if (sr == null) Debug.LogError("EnemyController: SpriteRenderer missing in children.", this);
-        // animator can be null if you don't use animations yet (that's fine)
     }
 
     private void Update()
