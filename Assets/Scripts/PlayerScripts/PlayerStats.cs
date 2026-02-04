@@ -74,11 +74,21 @@ public class PlayerStats : MonoBehaviour
         OnStatChanged?.Invoke(PlayerStatType.Strength);
     }
 
-
     public int GetStatLevel(PlayerStatType type)
     {
         EnsureInitialized();
-        return stats.TryGetValue(type, out var stat) ? stat.level : 0;
+
+        if (!stats.TryGetValue(type, out var stat) || stat == null)
+            return 0;
+
+        // Normalize/clamp level to valid bounds to ensure other code can't observe invalid values.
+        if (stat.level < 0)
+            stat.level = 0;
+
+        if (stat.level > stat.hardCap)
+            stat.level = stat.hardCap;
+
+        return stat.level;
     }
     public int GetBaseStat(PlayerStatType type) 
     {
@@ -90,19 +100,33 @@ public class PlayerStats : MonoBehaviour
         EnsureInitialized();
         return baseStats[type] + stats[type].level * 20;
     }
+
     public bool TryIncreaseStat(PlayerStatType type)
     {
-        if (stats[type].level >= stats[type].hardCap) return false;
-        stats[type].level++;    
+        EnsureInitialized();
+
+        if (!stats.TryGetValue(type, out var stat))
+            return false;
+
+        if (stat.level >= stat.hardCap)
+            return false;
+
+        stat.level++;
         OnStatChanged?.Invoke(type);
         return true;
     }
 
     public bool TryDecreaseStat(PlayerStatType type)
     {
-        if (stats[type].level >= stats[type].hardCap) return false;
-        if (stats[type].level <= 0) return false;
-        stats[type].level--;
+        EnsureInitialized();
+
+        if (!stats.TryGetValue(type, out var stat))
+            return false;
+
+        if (stat.level <= 0)
+            return false;
+
+        stat.level--;
         OnStatChanged?.Invoke(type);
         return true;
     }
@@ -123,7 +147,7 @@ public class PlayerStats : MonoBehaviour
         {
             PlayerStatType.Health => "+20 HP",
             PlayerStatType.Stamina => "+15 Stamina",
-            PlayerStatType.Strength => "+5% Damage",
+            PlayerStatType.Strength => "+6 Damage",
             PlayerStatType.Durability => "+4% DR",
             _ => ""
         };

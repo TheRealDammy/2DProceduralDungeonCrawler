@@ -1,8 +1,9 @@
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
-using System.Collections;
 
 public class StatsUIController : MonoBehaviour
 {
@@ -25,6 +26,13 @@ public class StatsUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI durabilityText;
     [SerializeField] private Image durabilityBar;
 
+    [Header("Display")]
+    [SerializeField] private TextMeshProUGUI playerHealthText;
+    [SerializeField] private TextMeshProUGUI playerStaminaText;
+    [SerializeField] private TextMeshProUGUI playerDamageText;
+    [SerializeField] private TextMeshProUGUI playerDurabilityText;
+    [SerializeField] private TextMeshProUGUI playerMoveSpeedText;
+
     private PlayerStats playerStats;
     private PlayerHealth playerHealth;
     private TopDownCharacterController controller;
@@ -32,10 +40,13 @@ public class StatsUIController : MonoBehaviour
     private CombatController combatController;
 
     [SerializeField] private ExperienceSystem experienceSystem;
+    
 
     private void OnEnable()
     {
-        bindRoutine = StartCoroutine(BindWhenPlayerExists());
+        RefreshUI();
+
+        bindRoutine = StartCoroutine(BindWhenPlayerExists());        
     }
 
     private void OnDisable()
@@ -63,6 +74,7 @@ public class StatsUIController : MonoBehaviour
                 experienceSystem = player.GetComponent<ExperienceSystem>();
                 playerHealth = player.GetComponent<PlayerHealth>();
                 controller = player.GetComponent<TopDownCharacterController>();
+                combatController = player.GetComponent<CombatController>();
 
                 if (playerStats != null && experienceSystem != null)
                 {
@@ -75,8 +87,8 @@ public class StatsUIController : MonoBehaviour
                     yield break; // IMPORTANT: stop coroutine
                 }
             }
-            yield return null; // try again next frame
-        }
+            yield return null; // try again next frame           
+        }       
     }
 
     private void Unbind()
@@ -181,6 +193,13 @@ public class StatsUIController : MonoBehaviour
         UpdateRow(PlayerStatType.Durability, durabilityText, durabilityBar);
 
         pointsText.text = $"Stat Points: {experienceSystem.GetStatPoints()}";
+
+        playerHealthText.text = $"Health: {playerHealth.GetMaxHealth()}";
+        playerStaminaText.text = $"Stamina: {controller.GetMaxStamina()}";
+        playerDamageText.text = $"Damage: {combatController.GetFinalDamage()}";
+        playerDurabilityText.text =
+            $"Damage Reduction: {playerStats.GetDamageReductionPercent()}%";
+        playerMoveSpeedText.text = $"Move Speed: {controller.GetCurrentSpeed()}";
     }
 
     private void UpdateRow(PlayerStatType type, TextMeshProUGUI text, Image bar)

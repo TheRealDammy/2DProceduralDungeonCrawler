@@ -11,11 +11,16 @@ public abstract class CombatController : MonoBehaviour
 
     protected bool isAttacking;
     protected float lastAttackTime;
-    protected int baseDamage;
 
     [Header("Core Combat")]
     [SerializeField] protected float attackCooldown = 0.3f;
-    [SerializeField] protected float hitStopTime = 0.06f;    
+    [SerializeField] protected float hitStopTime = 0.06f;
+
+    // Expose a base damage value that represents the unmodified damage (set in Inspector).
+    [SerializeField] protected int baseDamage = 10;
+
+    // Computed final damage after applying stats (not serialized).
+    protected int finalDamage;
 
     protected virtual void Awake()
     {
@@ -39,16 +44,24 @@ public abstract class CombatController : MonoBehaviour
         ExecuteAttack();
     }
 
+    // Apply stats to compute final damage.
     public void ApplyStats()
     {
-        int strength = stats.GetFinalStat(PlayerStatType.Strength);
+        if (stats == null)
+        {
+            Debug.LogError("[CombatController] Cannot ApplyStats: missing PlayerStats");
+            return;
+        }
 
-        // scaling: +5% per strength point
-        float multiplier = (strength * 0.05f);
+        int strength = stats.GetStatLevel(PlayerStatType.Strength);
 
-        baseDamage = Mathf.Max(1, Mathf.RoundToInt(baseDamage + multiplier));
+        // scaling: +6 per strength point
+        float multiplier = 1f + 0.2f * strength;
 
-        Debug.Log($"[CombatController] Applied Stats: Strength={strength}, BaseDamage={baseDamage}");
+        // Do not mutate baseDamage; compute and store finalDamage.
+        finalDamage = Mathf.RoundToInt(baseDamage * multiplier);
+
+        Debug.Log($"[CombatController] Applied Stats: Strength={strength}, BaseDamage={baseDamage}, FinalDamage={finalDamage}");
     }
 
     public int GetFinalDamage()
@@ -56,10 +69,18 @@ public abstract class CombatController : MonoBehaviour
         if (stats == null)
         {
             Debug.LogError("CombatController missing PlayerStats");
+            // Fallback to baseDamage if stats are missing.
             return baseDamage;
         }
 
-        return baseDamage;
+        // If ApplyStats has already computed finalDamage, return it.
+        if (finalDamage > 0)
+            return finalDamage;
+
+        // Otherwise compute on the fly to ensure a sensible value.
+        int strength = stats.GetStatLevel(PlayerStatType.Strength);
+        float multiplier = 1f + 0.05f * strength;
+        return Mathf.RoundToInt(baseDamage * multiplier);
     }
 
     protected abstract void ExecuteAttack();

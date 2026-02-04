@@ -36,6 +36,7 @@ public class TopDownCharacterController : MonoBehaviour
 
     private bool isSprinting;
     private bool inventoryOpen;
+    private PlayerInput input;
 
     // =========================
     // UNITY
@@ -45,6 +46,7 @@ public class TopDownCharacterController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         stats = GetComponent<PlayerStats>();
+        input = GetComponent<PlayerInput>();
     }
 
     private void OnEnable()
@@ -110,7 +112,11 @@ public class TopDownCharacterController : MonoBehaviour
 
     public void HandleOpenInventory(InputAction.CallbackContext ctx)
     {
-        if (!ctx.performed) return;
+        if (!ctx.performed)
+        {
+            input.actions.FindActionMap("Player").Enable();
+            return;
+        } 
 
         inventoryOpen = !inventoryOpen;
         inventoryUI.SetActive(inventoryOpen);
