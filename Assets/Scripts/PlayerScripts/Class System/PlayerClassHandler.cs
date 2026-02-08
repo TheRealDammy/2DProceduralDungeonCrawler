@@ -7,16 +7,22 @@ public class PlayerClassHandler : MonoBehaviour
 
     private PlayerStats stats;
     private TopDownCharacterController movement;
+    private Animator animator;
+    
 
     private void Awake()
     {
         stats = GetComponent<PlayerStats>();
         movement = GetComponent<TopDownCharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     public void ApplyClass(CharacterClassData classData)
     {
         SelectedClass = classData;
+        animator.SetInteger("ClassID", (int)SelectedClass.characterClass);
+
+        Debug.Log($"Applied class: {SelectedClass.characterClass}");
 
         // Apply base stats
         stats.SetBaseStats(
@@ -34,6 +40,6 @@ public class PlayerClassHandler : MonoBehaviour
         CombatController combat =
             Instantiate(classData.combatPrefab, transform);
 
-        combat.transform.localPosition = Vector3.zero;
+        combat.transform.localPosition = Vector3.zero;       
     }
 }

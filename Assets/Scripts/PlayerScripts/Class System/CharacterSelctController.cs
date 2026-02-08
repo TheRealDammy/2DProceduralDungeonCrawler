@@ -5,7 +5,10 @@ public class CharacterSelectController : MonoBehaviour
 {
     public static CharacterSelectController Instance { get; private set; }
 
-    public CharacterClass SelectedClass { get; private set; }
+    [Header("Class Data")]
+    [SerializeField] private CharacterClassData swordsman;
+    [SerializeField] private CharacterClassData archer;
+    [SerializeField] private CharacterClassData mage;
 
     public CharacterClassData selectedClassData;
 
@@ -21,20 +24,21 @@ public class CharacterSelectController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void SelectSwordsman() => Select(CharacterClass.Swordsman);
-    public void SelectArcher() => Select(CharacterClass.Archer);
-    public void SelectMage() => Select(CharacterClass.Mage);
+    public void SelectSwordsman() => Select(swordsman);
+    public void SelectArcher() => Select(swordsman);
+    public void SelectMage() => Select(swordsman);
 
     public void SelectRandom()
     {
-        var classes = (CharacterClass[])System.Enum.GetValues(typeof(CharacterClass));
-        int index = Random.Range(0, classes.Length);
-        Select(classes[index]);
+        CharacterClassData[] all = { swordsman };
+        Select(all[Random.Range(0, all.Length)]);
     }
 
-    private void Select(CharacterClass chosen)
+    private void Select(CharacterClassData data)
     {
-        SelectedClass = chosen;
+        selectedClassData = data;
+        Debug.Log($"Selected class data: {data.characterClass}");
         SceneManager.LoadScene("Dungeon");
     }
 }
+

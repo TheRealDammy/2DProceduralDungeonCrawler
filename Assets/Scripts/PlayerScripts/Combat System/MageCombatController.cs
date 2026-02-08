@@ -4,35 +4,28 @@ public class MageCombatController : CombatController
 {
     [SerializeField] GameObject spellPrefab;
     [SerializeField] private Transform castPoint;
-    [SerializeField] float castRange = 3f;
-    [SerializeField] float range = 3.2f;
     [SerializeField] float radius = 0.2f;
-    [SerializeField] LayerMask enemyLayers;
+    [SerializeField] private LayerMask hitMask;
 
     protected override void ExecuteAttack()
     {
         lastAttackTime = Time.time;
+
         animator.SetTrigger("Cast");
 
-        Vector2 target = (Vector2)transform.position +
-            movement.GetFacingDirection() * castRange;
+        Vector2 center = castPoint.position;
+        Collider2D[] hits = Physics2D.OverlapCircleAll(center, radius, hitMask);
 
-        Instantiate(spellPrefab, target, Quaternion.identity);
+        int dmg = GetFinalDamage();
 
-        DealDamage();
+        foreach (var hit in hits)
+        {
+            IDamageable d = hit.GetComponentInParent<IDamageable>();
+            if (d != null)
+                d.TakeDamage(dmg, center, Vector2.zero);
+        }
+
         HitStop();
         CameraShake.Instance.Shake(0.25f, 0.12f);
-    }
-
-    private void DealDamage()
-    {
-        Vector2 dir = movement.GetFacingDirection();
-        Vector2 center = (Vector2)castPoint.position + dir * range;
-
-        foreach (var hit in Physics2D.OverlapCircleAll(center, radius, enemyLayers))
-        {
-            if (hit.TryGetComponent(out IDamageable dmg))
-                dmg.TakeDamage(stats.GetStatLevel(PlayerStatType.Strength) * 2 + 5, center, dir);
-        }
     }
 }

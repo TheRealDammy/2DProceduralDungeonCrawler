@@ -1274,6 +1274,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b30e5e02b80e81f4cac997b2034f8033, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  swordsman: {fileID: 11400000, guid: 0fdc8a10abf0d1a4eafc4e7550a4f143, type: 2}
+  archer: {fileID: 11400000, guid: 2023d6c0a621de24c8fa40a85ea363a5, type: 2}
+  mage: {fileID: 11400000, guid: b56376545e3097f45b47802d0c2b2e92, type: 2}
+  selectedClassData: {fileID: 0}
 --- !u!4 &1283866728
 Transform:
   m_ObjectHideFlags: 0

@@ -11,6 +11,8 @@ public abstract class CombatController : MonoBehaviour
 
     protected bool isAttacking;
     protected float lastAttackTime;
+    protected PlayerSFX sfx;
+
 
     [Header("Core Combat")]
     [SerializeField] protected float attackCooldown = 0.3f;
@@ -24,23 +26,36 @@ public abstract class CombatController : MonoBehaviour
 
     protected virtual void Awake()
     {
-        owner = transform;
-        animator = GetComponent<Animator>();
-        stats = GetComponent<PlayerStats>();
-        input = GetComponent<PlayerInputHandler>();
-        movement = GetComponent<TopDownCharacterController>();
+        owner = transform.parent != null ? transform.parent : transform;
+
+        animator = GetComponentInParent<Animator>();
+        stats = GetComponentInParent<PlayerStats>();
+        input = GetComponentInParent<PlayerInputHandler>();
+        movement = GetComponentInParent<TopDownCharacterController>();
+        sfx = GetComponentInParent<PlayerSFX>();
+
+        if (input == null)
+            Debug.LogError("[CombatController] Missing PlayerInputHandler");
+
+        if (movement == null)
+            Debug.LogError("[CombatController] Missing TopDownCharacterController");
     }
 
     protected virtual void Update()
     {
-        if (input.AttackPressed)
-            TryAttack();
+        //if (input == null || movement == null)
+            //return;
+
+        //if (input.AttackPressed)
+            //TryAttack();
+
         lastDirection = movement.GetFacingDirection();
     }
 
     public virtual void TryAttack()
     {
         if (Time.time < lastAttackTime + attackCooldown) return;
+        sfx?.PlayAttack();
         ExecuteAttack();
     }
 

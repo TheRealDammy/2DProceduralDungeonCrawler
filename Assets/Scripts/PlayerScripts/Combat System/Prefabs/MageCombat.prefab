@@ -46,12 +46,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 0.5
   hitStopTime: 0.06
-  damage: 30
-  spellPrefab: {fileID: 0}
+  baseDamage: 10
+  spellPrefab: {fileID: 5734386077616160123, guid: cc19c699697238c4294681e17b3115ad, type: 3}
   castPoint: {fileID: 0}
-  castRange: 3
-  range: 3.2
   radius: 0.2
-  enemyLayers:
+  hitMask:
     serializedVersion: 2
     m_Bits: 768

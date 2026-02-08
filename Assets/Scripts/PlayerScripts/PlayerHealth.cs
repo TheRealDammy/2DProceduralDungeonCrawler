@@ -4,6 +4,8 @@ using UnityEngine.UI;
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [SerializeField] private Image healthBar;
+    [SerializeField] private PlayerSFX sfx;
+
 
     private float maxHealth;
     private float currentHealth;
@@ -12,6 +14,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Awake()
     {
         stats = GetComponent<PlayerStats>();
+        sfx = GetComponentInChildren<PlayerSFX>();
+
     }
 
     public void ApplyStats(bool fullHeal)
@@ -28,6 +32,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         currentHealth -= Mathf.Max(1, reduced);
         UpdateUI();
+
+        sfx?.PlayHit();
     }
 
     public void Heal(int amount)

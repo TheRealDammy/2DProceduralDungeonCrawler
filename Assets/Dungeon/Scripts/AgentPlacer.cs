@@ -136,11 +136,13 @@ public class AgentPlacer : MonoBehaviour
         }
 
         // Corridor spawns as "extra action" (doesn't steal from rooms)
+        int corridorCount = Mathf.RoundToInt(totalRoomEnemies * corridorSpawnShare);       
         if (allowCorridorSpawns && corridorSpawnShare > 0f)
         {
-            int corridorCount = Mathf.RoundToInt(totalRoomEnemies * corridorSpawnShare);
             SpawnCorridorEnemies(corridorCount);
         }
+      
+        GameManager.Instance.RegisterEnemies(totalRoomEnemies + corridorCount);
     }
 
     private void CacheReservedFromProps()
@@ -214,31 +216,23 @@ public class AgentPlacer : MonoBehaviour
         // Reserve player tile
         reserved.Add(spawnTile);
 
-        var classManager = PlayerClassHandler.Instance;
+        var classHandler = player.GetComponent<PlayerClassHandler>();
+        var selector = CharacterSelectController.Instance;
 
-        if (classManager == null || classManager.SelectedClass == null)
+        if (classHandler != null && selector != null && selector.selectedClassData != null)
         {
-            Debug.LogError("PlayerClassManager or SelectedClass missing!");
-            return;
+            classHandler.ApplyClass(selector.selectedClassData);
         }
-
-        var classData = classManager.SelectedClass;
-
-        // Attach combat
-        CombatController combat =
-            Instantiate(classData.combatPrefab, player.transform);
-
-        combat.transform.localPosition = Vector3.zero;
-        combat.transform.localRotation = Quaternion.identity;
-
-        // Apply base stats
-        var stats = player.GetComponent<PlayerStats>();
-        stats.SetBaseStats(
-            classData.baseHealth,
-            classData.baseStamina,
-            classData.baseStrength,
-            classData.baseDurability
-        );
+        else
+        {
+            Debug.LogWarning(
+                $"AgentPlacer: Missing references\n" +
+                $"ClassHandler: {classHandler}\n" +
+                $"Selector: {selector}\n" +
+                $"ClassData: {selector?.selectedClassData}",
+                this
+            );
+        }
 
         // ---------- APPLY HEALTH AFTER STATS ----------
         var health = player.GetComponent<PlayerHealth>();

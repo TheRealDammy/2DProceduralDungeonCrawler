@@ -8,7 +8,7 @@ public class PlayerBootstrapper : MonoBehaviour
         var health = GetComponent<PlayerHealth>();
 
         CharacterClass cls = CharacterSelectController.Instance != null
-            ? CharacterSelectController.Instance.SelectedClass
+            ? CharacterSelectController.Instance.selectedClassData.characterClass
             : CharacterClass.Swordsman;
 
         ApplyClass(cls, stats);

@@ -19,6 +19,8 @@ public class TopDownCharacterController : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject inventoryUI;
 
+    [SerializeField] private PlayerSFX sfx;
+
     private Rigidbody2D rb;
     private Animator animator;
     private PlayerStats stats;
@@ -47,6 +49,9 @@ public class TopDownCharacterController : MonoBehaviour
         animator = GetComponent<Animator>();
         stats = GetComponent<PlayerStats>();
         input = GetComponent<PlayerInput>();
+        if (!sfx)
+            sfx = GetComponentInChildren<PlayerSFX>();
+
     }
 
     private void OnEnable()
@@ -103,6 +108,7 @@ public class TopDownCharacterController : MonoBehaviour
 
         if (input != Vector2.zero)
             facingDirection = input.normalized;
+
     }
 
     public void HandleSprint(InputAction.CallbackContext ctx)

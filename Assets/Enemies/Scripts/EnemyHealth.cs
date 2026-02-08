@@ -16,6 +16,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     [SerializeField] private Image healthBar;
     [SerializeField] private Canvas healthBarCanvas;
+    [SerializeField] private EnemySFX sfx;
+
 
     private EnemyVariantData enemyData;
 
@@ -35,6 +37,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         player = GameObject.FindGameObjectWithTag("Player");
         expSystem = player.GetComponent<ExperienceSystem>();
         healthBarCanvas.enabled = false;
+        sfx = GetComponent<EnemySFX>();
     }
 
     public void Init(int maxHp)
@@ -61,6 +64,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             Die();
         }
+
+        sfx?.PlayHit();
     }
 
     private void Die()
@@ -69,11 +74,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         rb.linearVelocity = Vector2.zero;
         rb.simulated = false;
 
+        sfx?.PlayDeath();
+
         // disable colliders so it doesn't block / get hit multiple times
-         foreach (var c in colliders)
+        foreach (var c in colliders)
            if (c != null) c.enabled = false;
 
         animator.SetBool("isDead", true);
+        GameManager.Instance?.EnemyKilled();
 
         // grant experience to player
         if (enemyData == null)
@@ -89,6 +97,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             expSystem.AddXP(Mathf.RoundToInt(enemyData.spawnExperience));
         }
 
-        DestroyImmediate(gameObject);
+        Destroy(gameObject, 0.2f);
     }
 }
