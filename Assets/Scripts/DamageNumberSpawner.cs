@@ -13,6 +13,8 @@ public class DamageNumberSpawner : MonoBehaviour
 
     public void Spawn(int amount, Vector2 position, bool crit = false)
     {
+        Debug.Log($"Spawning damage number: {amount} at {position} (Crit: {crit})");
+
         GameObject obj =
             Instantiate(damageNumberPrefab, position, Quaternion.identity);
 
