@@ -199,8 +199,6 @@ public class AgentPlacer : MonoBehaviour
         PlaceEnemiesSmart(room, count, difficulty);
     }
 
-
-
     private float ComputeRoomDifficulty(int roomIndex)
     {
         float baseDiff = 1f + roomIndex * difficultyPerRoom;
@@ -449,9 +447,10 @@ public class AgentPlacer : MonoBehaviour
 
     private List<Vector2Int> GetCorridorCandidates()
     {
-        // True corridor tiles (path), not reserved
+        // True corridor tiles (path), not reserved and reachable from at least one room (prevents spawning in dead-end branches not connected to rooms)
         return dungeonData.path
             .Where(t => !reserved.Contains(t))
+            .Where(t => dungeonData.rooms.Any(r => r.FloorTiles.Contains(t)))
             .Distinct()
             .ToList();
     }

@@ -21,7 +21,7 @@ public class MenuManager : MonoBehaviour
         {
             controlsPanel.SetActive(true);
             menuPanel.SetActive(false);
-            text.text = "Controls";
+            text.text = "How To Play";
         }
         controlsPanelOpen = !controlsPanelOpen;
     }

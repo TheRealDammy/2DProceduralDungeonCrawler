@@ -40,6 +40,8 @@ public class TopDownCharacterController : MonoBehaviour
     private bool inventoryOpen;
     private PlayerInput input;
 
+    private bool isPaused;
+
     // =========================
     // UNITY
     // =========================
@@ -121,11 +123,15 @@ public class TopDownCharacterController : MonoBehaviour
         if (!ctx.performed)
         {
             input.actions.FindActionMap("Player").Enable();
+            isPaused= false;
+            Time.timeScale = 1f;
             return;
         } 
 
         inventoryOpen = !inventoryOpen;
+        isPaused = !isPaused;
         inventoryUI.SetActive(inventoryOpen);
+        Time.timeScale = isPaused ? 0f : 1f;
     }
 
     // =========================

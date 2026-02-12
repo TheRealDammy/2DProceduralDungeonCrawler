@@ -11,6 +11,7 @@ public class PropPlacementManager : MonoBehaviour
 
     [SerializeField] private List<Prop> propsToPlace;
     [SerializeField] private GameObject propPrefab;
+    [SerializeField] private GameObject exitPortalPrefab;
 
     [Header("Traps")]
     [SerializeField] private GameObject spikeTrapPrefab;
@@ -87,6 +88,7 @@ public class PropPlacementManager : MonoBehaviour
 
             SpawnTraps(room);
             SpawnCheckpoints();
+
         }
         Invoke("RunEvent", 1);
 

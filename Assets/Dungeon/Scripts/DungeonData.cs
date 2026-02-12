@@ -26,10 +26,6 @@ public class DungeonData : MonoBehaviour
     }
 }
 
-
-/// <summary>
-/// Holds all the data about the room
-/// </summary>
 public class Room
 {
     public Vector2 RoomCenterPos { get; set; }
@@ -68,4 +64,31 @@ public class Room
     {
         IsDiscovered = true;
     }
+    public HashSet<Vector2Int> GetReachableTiles(Vector2Int start)
+    {
+        HashSet<Vector2Int> visited = new();
+        Queue<Vector2Int> queue = new();
+
+        queue.Enqueue(start);
+        visited.Add(start);
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+
+            foreach (var dir in Direction2D.cardinalDirectionsList)
+            {
+                var next = current + dir;
+
+                if (!visited.Contains(next) && FloorTiles.Contains(next))
+                {
+                    visited.Add(next);
+                    queue.Enqueue(next);
+                }
+            }
+        }
+
+        return visited;
+    }
+
 }

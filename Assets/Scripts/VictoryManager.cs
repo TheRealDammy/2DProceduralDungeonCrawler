@@ -9,12 +9,14 @@ public class VictoryManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI killsText;
     [SerializeField] private TextMeshProUGUI damageText;
 
+    public static VictoryManager Instance { get; private set; }
+
     private void OnEnable()
     {
         GameManager.Instance.OnGameCompleted += ShowVictory;
     }
 
-    private void ShowVictory()
+    public void ShowVictory()
     {
         Time.timeScale = 0f;
 

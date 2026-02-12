@@ -17,12 +17,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private Image healthBar;
     [SerializeField] private Canvas healthBarCanvas;
     [SerializeField] private EnemySFX sfx;
+    [SerializeField] private int hitsToStagger = 3;
+    [SerializeField] private float staggerDuration = 0.6f;
 
+    private bool isStaggered;
+    private int hitCounter;
 
     private EnemyVariantData enemyData;
 
     private ExperienceSystem expSystem;
     GameObject player;
+    public bool isDead = false;
 
     private void Awake()
     {
@@ -51,6 +56,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         healthBar.fillAmount = (float)currentHP / (float)maxHP;
     }
 
+    public void FixedUpdate()
+    {
+        if (isStaggered) return;
+    }
+
     public void TakeDamage(int amount, Vector2 hitPoint, Vector2 hitDirection)
     {
         animator.SetTrigger("Hurt");
@@ -60,8 +70,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         currentHP -= Mathf.Max(1, amount);
 
+        hitCounter++;
+
+        if (hitCounter >= hitsToStagger)
+        {
+            StartCoroutine(Stagger());
+            hitCounter = 0;
+        }
+
         if (currentHP <= 0)
         {
+            isDead= true;
             Die();
         }
 
@@ -101,4 +120,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         Destroy(gameObject, 0.2f);
     }
+
+    private IEnumerator Stagger()
+    {
+        isStaggered = true;
+        rb.linearVelocity = Vector2.zero;
+
+        yield return new WaitForSeconds(staggerDuration);
+
+        isStaggered = false;
+    }
+
 }

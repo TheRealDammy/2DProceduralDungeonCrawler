@@ -3,6 +3,7 @@ using UnityEngine;
 public class CameraShake : MonoBehaviour
 {
     public static CameraShake Instance;
+    public static bool enabledGlobal = true;
 
     private void Awake()
     {
@@ -11,6 +12,7 @@ public class CameraShake : MonoBehaviour
 
     public void Shake(float intensity = 0.2f, float duration = 0.1f)
     {
+        if (!enabledGlobal) return;
         StartCoroutine(ShakeRoutine(intensity, duration));
     }
 

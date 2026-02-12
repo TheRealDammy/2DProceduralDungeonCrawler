@@ -82,6 +82,8 @@ public class RoomsFirstGenerator : RandomDungeonGenerator
         WallGenerator.FillEnclosedHoles(finalFloorPositions);
         SmoothFloor(finalFloorPositions, iterations: 1);
 
+
+
         // IMPORTANT: update each room's FloorTiles to match FINAL (but don't eat corridors)
         UpdateRoomsFromFinalFloor(generatedRooms, finalFloorPositions, corridors);
 
@@ -107,7 +109,27 @@ public class RoomsFirstGenerator : RandomDungeonGenerator
             Debug.Log($"EXTRACTOR dungeonData: {dungeonData?.name}");
         }
 
-        //trigger.RoomReference = room;
+
+        // Ensure corridors are always part of final at 3x3 ( or accessable) (even if smoothing removed some)
+        foreach (var pos in corridors)
+        {
+            finalFloorPositions.Add(pos);
+        }
+
+        // Global Validation: ensure all floor tiles are reachable
+        if (roomCenters == null || roomCenters.Count == 0)
+        {
+            Debug.LogError("Dungeon generation failed: no rooms created.");
+            return;
+        }
+
+        Vector2Int playerStart = roomCenters[0];
+
+
+        var reachable = GetGloballyReachableTiles(finalFloorPositions, playerStart);
+
+        // Remove unreachable tiles completely
+        finalFloorPositions.IntersectWith(reachable);
     }
 
     private (HashSet<Vector2Int> allFloors, List<Room> rooms) CreateRoomsAndData(List<BoundsInt> roomsBounds)
@@ -335,4 +357,34 @@ public class RoomsFirstGenerator : RandomDungeonGenerator
             room.SetFloorTiles(newRoomTiles);
         }
     }
+
+    private HashSet<Vector2Int> GetGloballyReachableTiles(
+    HashSet<Vector2Int> floor,
+    Vector2Int start)
+    {
+        HashSet<Vector2Int> visited = new();
+        Queue<Vector2Int> queue = new();
+
+        queue.Enqueue(start);
+        visited.Add(start);
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+
+            foreach (var dir in CardinalDirs)
+            {
+                var next = current + dir;
+
+                if (!visited.Contains(next) && floor.Contains(next))
+                {
+                    visited.Add(next);
+                    queue.Enqueue(next);
+                }
+            }
+        }
+
+        return visited;
+    }
+
 }

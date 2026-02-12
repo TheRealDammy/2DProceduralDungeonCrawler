@@ -37,9 +37,9 @@ public class GameManager : MonoBehaviour
             CompleteGame();
     }
 
-    private void CompleteGame()
+    public void CompleteGame()
     {
         OnGameCompleted?.Invoke();
-        SceneManager.LoadScene("WinScreen");
+        VictoryManager.Instance.ShowVictory();
     }
 }

@@ -19,10 +19,15 @@ public class PauseManager : MonoBehaviour
 
     public void TogglePause(InputAction.CallbackContext ctx)
     {
+        if (!ctx.performed) return;
+
+        if (settingsOpen) return; // prevent pausing while in settings
+
         isPaused = !isPaused;
         pauseUI.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1f;
     }
+
 
     public void Resume()
     {
@@ -31,19 +36,18 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void ToggleSettings()
+    public void OpenSettings()
     {
-        if (settingsOpen)
-        {
-            settingsPanel.SetActive(false);
-            pauseUI.SetActive(true);
-        }
-        else
-        {
-            settingsPanel.SetActive(true);
-            pauseUI.SetActive(false);
-        }
-        settingsOpen = !settingsOpen;
+        settingsOpen = true;
+        pauseUI.SetActive(false);
+        settingsPanel.SetActive(true);
+    }
+
+    public void CloseSettings()
+    {
+        settingsOpen = false;
+        settingsPanel.SetActive(false);
+        pauseUI.SetActive(true);
     }
 
     public void QuitToMenu()
